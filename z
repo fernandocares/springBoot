@@ -1,0 +1,29 @@
+[33mcommit b20450c87b6c565b6fc255c0cd5af68d5db47e35[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Fernando Cares <fernandocareswork@gmail.com>
+Date:   Tue Jul 24 22:45:28 2018 -0300
+
+    Implementado Cidade e Estado
+
+[33mcommit 122fbd34781e2e97c5b7884985dbbda9e6815b30[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Fernando Cares <fernandocareswork@gmail.com>
+Date:   Sun Jul 22 00:51:11 2018 -0300
+
+    Ajuste no endpoint de categoria REST e exceções
+
+[33mcommit 0d0ef0bb1180f91f6e2f6feb85defc22b89c8852[m
+Author: Fernando Cares <fernandocareswork@gmail.com>
+Date:   Sat Jul 21 00:55:55 2018 -0300
+
+    Implementação de ManyToMany
+
+[33mcommit 19eed63b8cb7aa310b38ca3a1390ddf8c73525a0[m
+Author: Fernando Cares <fernandocareswork@gmail.com>
+Date:   Sat Jul 21 00:21:04 2018 -0300
+
+    Implementado SaveAll
+
+[33mcommit 6d024ad2b39175137652f768b192edf218c1fdec[m
+Author: Fernando Cares <fernandocareswork@gmail.com>
+Date:   Fri Jul 20 23:27:44 2018 -0300
+
+    First commit of SpringBoot course
