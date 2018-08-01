@@ -113,7 +113,7 @@ public class Application implements CommandLineRunner{
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
 		Pedido ped1 = new Pedido( null, sdf.parse("31/07/2018 19:46"), cli1, e1);
 		Pedido ped2 = new Pedido( null, sdf.parse("31/07/2018 20:00"), cli1, e2);
