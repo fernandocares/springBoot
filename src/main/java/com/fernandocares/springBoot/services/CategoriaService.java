@@ -1,15 +1,19 @@
 package com.fernandocares.springBoot.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.fernandocares.springBoot.domain.Categoria;
 import com.fernandocares.springBoot.repositories.CategoriaRepository;
-import com.fernandocares.springBoot.services.exception.ObjectNotFoundException;
 import com.fernandocares.springBoot.services.exception.DataIntegrityException;
+import com.fernandocares.springBoot.services.exception.ObjectNotFoundException;
 
 @Service
 public class CategoriaService {
@@ -42,4 +46,15 @@ public class CategoriaService {
 			throw new DataIntegrityException("Falha ao excluir: este registro possui relação com outra tabela");
 		}
 	}
+	
+	public List<Categoria> findAll(){
+		return repo.findAll();
+	}
+	
+	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String ordeBy, String direction){
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), ordeBy);
+		
+		return repo.findAll(pageRequest);
+	}
+		
 }

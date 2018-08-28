@@ -1,18 +1,23 @@
 package com.fernandocares.springBoot.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fernandocares.springBoot.domain.Categoria;
+import com.fernandocares.springBoot.dto.CategoriaDTO;
 import com.fernandocares.springBoot.services.CategoriaService;
 
 @RestController
@@ -51,5 +56,29 @@ public class CategoriaResource {
 		service.delete(id);
 		
 		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() {
+		 
+		List<Categoria> list = service.findAll();
+		
+		List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+		
+		return ResponseEntity.ok().body(listDTO);
+	}
+	
+	@RequestMapping(value="/page",method=RequestMethod.GET)
+	public ResponseEntity<Page<CategoriaDTO>> findPage(
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
+			@RequestParam(value="ordeBy", defaultValue="nome") String ordeBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String direction) {
+		 
+		Page<Categoria> list = service.findPage(page, linesPerPage, ordeBy, direction);
+		
+		Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
+		
+		return ResponseEntity.ok().body(listDTO);
 	}
 }
