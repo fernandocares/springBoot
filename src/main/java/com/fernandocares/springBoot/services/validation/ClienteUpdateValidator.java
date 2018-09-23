@@ -2,44 +2,44 @@ package com.fernandocares.springBoot.services.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.HandlerMapping;
 
 import com.fernandocares.springBoot.domain.Cliente;
-import com.fernandocares.springBoot.domain.enums.TipoCliente;
-import com.fernandocares.springBoot.dto.ClienteNewDTO;
+import com.fernandocares.springBoot.dto.ClienteDTO;
 import com.fernandocares.springBoot.repositories.ClienteRepository;
 import com.fernandocares.springBoot.resources.exceptions.FieldMessage;
-import com.fernandocares.springBoot.services.validation.utils.BR;
 
-public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO>{
+public class ClienteUpdateValidator implements ConstraintValidator<ClienteUpdate, ClienteDTO>{
+	
+	@Autowired
+	private HttpServletRequest request;
 	
 	@Autowired
 	private ClienteRepository repo;
 	
-	@Override
-	public void initialize(ClienteInsert ann) {
+	public void Initialize(ClienteUpdate ann) {
 		
 	}
 
 	@Override
-	public boolean isValid(ClienteNewDTO objDto, ConstraintValidatorContext context) {
+	public boolean isValid(ClienteDTO objDto, ConstraintValidatorContext context) {
+		
+		@SuppressWarnings("unchecked")
+		Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+		
+		Integer id = Integer.parseInt(map.get("id"));
 		
 		List<FieldMessage> list = new ArrayList<>();
 		
-		if (objDto.getTipo().equals(TipoCliente.PESSOAFISICA.getCod()) && !BR.isValidCPF(objDto.getCpfOuCnpj())) {
-			list.add(new FieldMessage("cpfOuCnpj", "CPF inválido"));
-		}
-
-		if (objDto.getTipo().equals(TipoCliente.PESSOAJURIDICA.getCod()) && !BR.isValidCNPJ(objDto.getCpfOuCnpj())) {
-			list.add(new FieldMessage("cpfOuCnpj", "CNPJ inválido"));
-		}
-
 		Cliente aux = repo.findByEmail(objDto.getEmail());
-		if (aux != null) {
+		if (aux != null && aux.getId() != id) {
 			list.add(new FieldMessage("email", "Email já existente"));
 		}
 		
@@ -48,7 +48,9 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 			context.buildConstraintViolationWithTemplate(e.getMessage()).addPropertyNode(e.getFieldName())
 					.addConstraintViolation();
 		}
+		
 		return list.isEmpty();
 	}
+	
 	
 }
