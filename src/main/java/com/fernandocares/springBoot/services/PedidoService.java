@@ -6,14 +6,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fernandocares.springBoot.domain.Cliente;
 import com.fernandocares.springBoot.domain.ItemPedido;
 import com.fernandocares.springBoot.domain.PagamentoComBoleto;
 import com.fernandocares.springBoot.domain.Pedido;
 import com.fernandocares.springBoot.domain.enums.EstadoPagamento;
+import com.fernandocares.springBoot.repositories.ClienteRepository;
 import com.fernandocares.springBoot.repositories.ItemPedidoRepository;
 import com.fernandocares.springBoot.repositories.PagamentoRepository;
 import com.fernandocares.springBoot.repositories.PedidoRepository;
-import com.fernandocares.springBoot.repositories.ProdutoRepository;
 import com.fernandocares.springBoot.services.exception.ObjectNotFoundException;
 
 @Service
@@ -34,6 +35,9 @@ public class PedidoService {
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
 	
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
 	public Pedido find(Integer id) {
 		Optional<Pedido> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
@@ -44,6 +48,10 @@ public class PedidoService {
 		
 		obj.setId(null);
 		obj.setInstante(new Date());
+		
+		Optional<Cliente> cliente = clienteRepository.findById(obj.getCliente().getId()); 
+		obj.setCliente(cliente.get());
+		
 		obj.getPagamento().setEstadoPagamento(EstadoPagamento.PENDENTE);
 		obj.getPagamento().setPedido(obj);
 		
@@ -57,13 +65,15 @@ public class PedidoService {
 		pagamentoRepository.save(obj.getPagamento());
 		
 		for(ItemPedido item : obj.getItens()) {
-			
 			item.setDesconto(0.0);
-			item.setPreco(produtoService.find(item.getProduto().getId()).getPreco());
+			item.setProduto(produtoService.find(item.getProduto().getId()));
+			item.setPreco(item.getProduto().getPreco());
 			item.setPedido(obj);
 		}
 		
 		itemPedidoRepository.saveAll(obj.getItens());
+		
+		System.out.println(obj);
 		
 		return obj;
 	}
