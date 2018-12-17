@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.fernandocares.springBoot.domain.Cliente;
@@ -15,6 +18,8 @@ import com.fernandocares.springBoot.repositories.ClienteRepository;
 import com.fernandocares.springBoot.repositories.ItemPedidoRepository;
 import com.fernandocares.springBoot.repositories.PagamentoRepository;
 import com.fernandocares.springBoot.repositories.PedidoRepository;
+import com.fernandocares.springBoot.security.UserSS;
+import com.fernandocares.springBoot.services.exception.AuthorizationException;
 import com.fernandocares.springBoot.services.exception.ObjectNotFoundException;
 
 @Service
@@ -40,6 +45,9 @@ public class PedidoService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private ClienteService clienteService;
 	
 	public Pedido find(Integer id) {
 		Optional<Pedido> obj = repo.findById(id);
@@ -79,4 +87,17 @@ public class PedidoService {
 		
 		return obj;
 	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String ordeBy, String direction){
+		UserSS user = UserService.authenticated();
+		if(user == null) {
+			throw new AuthorizationException("Acesso Negado");
+		}
+		
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), ordeBy);
+		Cliente cliente = clienteService.find(user.getId());
+				
+		return repo.findByCliente(cliente, pageRequest);
+	}
+	
 }

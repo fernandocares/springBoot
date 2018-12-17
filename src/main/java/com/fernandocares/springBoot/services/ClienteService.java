@@ -14,12 +14,15 @@ import org.springframework.stereotype.Service;
 import com.fernandocares.springBoot.domain.Cidade;
 import com.fernandocares.springBoot.domain.Cliente;
 import com.fernandocares.springBoot.domain.Endereco;
+import com.fernandocares.springBoot.domain.enums.Perfil;
 import com.fernandocares.springBoot.domain.enums.TipoCliente;
 import com.fernandocares.springBoot.dto.ClienteDTO;
 import com.fernandocares.springBoot.dto.ClienteNewDTO;
 import com.fernandocares.springBoot.repositories.CidadeRepository;
 import com.fernandocares.springBoot.repositories.ClienteRepository;
 import com.fernandocares.springBoot.repositories.EnderecoRepository;
+import com.fernandocares.springBoot.security.UserSS;
+import com.fernandocares.springBoot.services.exception.AuthorizationException;
 import com.fernandocares.springBoot.services.exception.DataIntegrityException;
 import com.fernandocares.springBoot.services.exception.ObjectNotFoundException;
 
@@ -39,6 +42,12 @@ public class ClienteService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso Negado");
+		}
+		
 		Optional<Cliente> cliente = repository.findById(id);
 		
 		return cliente.orElseThrow(() -> new ObjectNotFoundException(
