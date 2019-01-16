@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fernandocares.springBoot.domain.Cliente;
-import com.fernandocares.springBoot.dto.CategoriaDTO;
 import com.fernandocares.springBoot.dto.ClienteDTO;
 import com.fernandocares.springBoot.dto.ClienteNewDTO;
 import com.fernandocares.springBoot.services.ClienteService;
